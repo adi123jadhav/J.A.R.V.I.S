@@ -28,7 +28,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 db = SQL("sqlite:///user.db")
 
-db.execute("""CREATE TABLE IF NOT EXISTS user (
+db.execute("""CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
     hash TEXT NOT NULL
