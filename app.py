@@ -19,8 +19,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 os.environ["LANGCHAIN_TRACING_V2"]="true"
-os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
-os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY')
+os.environ["LANGCHAIN_API_KEY"] =os.environ.get('LANGCHAIN_API_KEY')
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
