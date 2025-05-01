@@ -14,21 +14,16 @@ import os
 import uuid
 
 
-
-from dotenv import load_dotenv
-
-load_dotenv()
 os.environ["LANGCHAIN_TRACING_V2"]="true"
-os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY')
-os.environ["LANGCHAIN_API_KEY"] =os.environ.get('LANGCHAIN_API_KEY')
-
+os.environ["LANGCHAIN_API_KEY"]="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"
+os.environ["GOOGLE_API_KEY"] = "AIzaSyDpD2Ltm4fQFDrLvf1nAMBazrKoKHGG5qI"
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 db = SQL("sqlite:///user.db")
 
-db.execute("""CREATE TABLE IF NOT EXISTS users (
+db.execute("""CREATE TABLE IF NOT EXISTS user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
     hash TEXT NOT NULL
@@ -47,7 +42,7 @@ def init_app():
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "You are JARVIS, Tony Stark's AI assistant. You are intelligent, efficient, and articulate. Respond in a formal, concise, and slightly witty manner. Provide solutions clearly, with occasional technical details, and maintain a polite tone."),
+            ("system", "act as a robot and your name is Jarvis you know your job extremely well"),
             MessagesPlaceholder(variable_name="messages"),
         ]
     )
@@ -150,6 +145,5 @@ def logout():
     return render_template('login.html')
 
 
-if __name__ == "__main__":
-    app.run()
-
+if __name__ == '__main__':
+    app.run(debug=True)
