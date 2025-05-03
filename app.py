@@ -10,6 +10,8 @@ from langgraph.graph import START, MessagesState, StateGraph
 # No imports should be named 'uuid.py' to avoid conflicts
 # Use absolute imports to avoid issues with naming conflicts
 import os
+import redis
+
 from uuid import uuid4  # Import specific function instead of whole module
 from functools import wraps
 from flask import Flask, redirect, render_template, request, session, jsonify
@@ -32,9 +34,12 @@ os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = "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"
 os.environ["GOOGLE_API_KEY"] = "AIzaSyDpD2Ltm4fQFDrLvf1nAMBazrKoKHGG5qI"
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "a-really-hard-to-guess-string")
+app.config["SESSION_TYPE"] = "redis"
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_USE_SIGNER"] = True
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key")
+
+app.config["SESSION_REDIS"] = redis.from_url("redis://default:DgGuIhzlOOl4XMQORQJSAssnURDiD4M7@redis-14137.c44.us-east-1-2.ec2.redns.redis-cloud.com:14137")
 Session(app)
 
 # Neon DB configuration
