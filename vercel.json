@@ -6,11 +6,13 @@
       "use": "@vercel/python"
     }
   ],
- 
   "routes": [
     {
       "src": "/(.*)",
       "dest": "app.py"
     }
-  ]
+  ],
+  "env": {
+    "PYTHONUNBUFFERED": "true"
+  }
 }
