@@ -28,9 +28,35 @@ Session(app)
 # Neon DB configuration
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://neondb_owner:npg_TSB9rnecdJC1@ep-gentle-block-a47j9qn2-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require")
 
+# Extract endpoint ID from the DATABASE_URL
+def get_endpoint_id():
+    # Parse the endpoint ID from the hostname part of the URL
+    # Example: postgresql://user:pass@ep-cool-name-123456.us-east-2.aws.neon.tech/dbname
+    # Endpoint ID would be: ep-cool-name-123456
+    try:
+        import re
+        match = re.search(r'@([^.]+)', DATABASE_URL)
+        if match:
+            return match.group(1)
+        return None
+    except:
+        return None
+
 # Database connection function
 def get_db_connection():
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    endpoint_id = get_endpoint_id()
+    
+    # If we can extract an endpoint ID, append it to the connection options
+    if endpoint_id:
+        # Check if there are already parameters in the URL
+        if '?' in DATABASE_URL:
+            connection_string = f"{DATABASE_URL}&options=endpoint%3D{endpoint_id}"
+        else:
+            connection_string = f"{DATABASE_URL}?options=endpoint%3D{endpoint_id}"
+    else:
+        connection_string = DATABASE_URL
+    
+    conn = psycopg2.connect(connection_string, sslmode='require')
     conn.autocommit = True
     return conn
 
