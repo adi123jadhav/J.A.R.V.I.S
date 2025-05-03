@@ -32,6 +32,7 @@ os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = "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"
 os.environ["GOOGLE_API_KEY"] = "AIzaSyDpD2Ltm4fQFDrLvf1nAMBazrKoKHGG5qI"
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "a-really-hard-to-guess-string")
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
