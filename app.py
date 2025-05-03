@@ -7,11 +7,22 @@ from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
+# No imports should be named 'uuid.py' to avoid conflicts
+# Use absolute imports to avoid issues with naming conflicts
 import os
-import uuid
+from uuid import uuid4  # Import specific function instead of whole module
+from functools import wraps
+from flask import Flask, redirect, render_template, request, session, jsonify
+from flask_session import Session
+from werkzeug.security import check_password_hash, generate_password_hash
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import START, MessagesState, StateGraph
+from dotenv import load_dotenv
 import psycopg2
 import psycopg2.extras
-from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
@@ -22,7 +33,7 @@ os.environ["LANGCHAIN_API_KEY"] = "lsv2_pt_bcc376b45b4743eb8afca822ea628cb8_ebfc
 os.environ["GOOGLE_API_KEY"] = "AIzaSyDpD2Ltm4fQFDrLvf1nAMBazrKoKHGG5qI"
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "redis"  
+app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Neon DB configuration
@@ -133,36 +144,36 @@ def after_request(response):
 def index():
     return render_template('index.html')
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     session.clear()
-    if request.method == "POST":
-        if not request.form.get("username"):
-            return render_template("error.html", error="Must Provide Username")
-        elif not request.form.get("password"):
-            return render_template("error.html", error="Must Provide Password")
+    if request.method == 'POST':
+        if not request.form.get('username'):
+            return render_template('error.html', error='Must Provide Username')
+        elif not request.form.get('password'):
+            return render_template('error.html', error='Must Provide Password')
         
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         
         cur.execute(
-            "SELECT * FROM users WHERE username = %s", (request.form.get("username"),))
+            'SELECT * FROM users WHERE username = %s', (request.form.get('username'),))
         rows = cur.fetchall()
         
         cur.close()
         conn.close()
         
         if len(rows) != 1 or not check_password_hash(
-            rows[0]["hash"], request.form.get("password")
+            rows[0]['hash'], request.form.get('password')
         ):
-            return render_template("error.html", error="Invalid Username or password")
+            return render_template('error.html', error='Invalid Username or password')
         
-        session["user_id"] = rows[0]["id"]
-        session["config_id"] = str(uuid.uuid4())
+        session['user_id'] = rows[0]['id']
+        session['config_id'] = str(uuid4())  # Use uuid4() instead of uuid.uuid4()
 
-        return redirect("/")
+        return redirect('/')
     else:
-        return render_template("login.html")
+        return render_template('login.html')
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
