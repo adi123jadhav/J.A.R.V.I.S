@@ -6,4 +6,4 @@ psycopg2-binary
 langchain_core
 langchain_google_genai
 langgraph
-
+redis
