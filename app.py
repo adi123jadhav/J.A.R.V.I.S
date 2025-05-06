@@ -112,7 +112,7 @@ def init_app():
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "act as a robot and your name is Jarvis you know your job extremely well"),
+            ("system", "act as a personal assistance robot of iron man Jarvis ,you know your job extremely well"),
             MessagesPlaceholder(variable_name="messages"),
         ]
     )
